@@ -64,12 +64,10 @@
         
         listen(form,"submit",function(e){
             isSubmit = true;
-            if(!bypassSubmit) {
-                if(btnSubmit && !noValidate && !form.checkValidity()) {
-                    preventActions(e);
-                }
+            if(!bypassSubmit && btnSubmit && !noValidate && !form.checkValidity()) {
+                preventActions(e);
             }
-            btnSubmit = false;
+            isSubmit = btnSubmit = false;
         },false);
         
         if(!support()) {
@@ -329,7 +327,7 @@
             try {
                 evt.preventDefault();
                 //Sometimes jQuery will throw a error in IE, "evt.stopPropagation is undefined"
-                (evt.stopImmediatePropagation || evt.stopPropagation)();
+                (evt.stopImmediatePropagation || evt.stopPropagation).call(evt);
                 return;
             } catch(e){}
         }
