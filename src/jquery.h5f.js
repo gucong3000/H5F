@@ -97,20 +97,24 @@
 		opt = $.extend({
 			validClass : "valid",
 			invalidClass : "error",
-			requiredClass : "required",
-			placeholderClass : "placeholder"
+			requiredClass : "required"
 		}, opt);
 
 		if(opt.events){
 			for(var i in opt.events){
 				this.delegate(i, opt.events[i], function(e){
-					var input = e.target;
-					//狗日的IE10、11在change事件发生时select标签的validity还未更新，所以延迟
-					window.setTimeout(function(){
-						if(input.checkValidity && input.checkValidity()){
-							validityCall(opt, e);
-						}
-					}, 1);
+					var	input = e.target,
+						callFn = function(){
+							if(input.checkValidity && input.checkValidity()){
+								validityCall(opt, e);
+							}
+						};
+					//IE10、11在change事件发生时select标签的validity还未更新，所以延迟
+					if(support && doc.documentMode && /select/i.test(input.tagName)){
+						setTimeout(callFn, 1);
+					} else {
+						callFn();
+					}
 				});
 			}
 		}

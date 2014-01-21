@@ -19,15 +19,15 @@
         nodes = /^(input|select|textarea)$/i,
         $, btnSubmit, isSubmit, bypassSubmit, usrPatt, curEvt, args,
         // Methods
-        setup, validation, validity, checkField, bypassChecks, checkValidity, setCustomValidity, support, pattern, placeholder, range, required, valueMissing, listen, unlisten, preventActions, getTarget, hasClass, addClass, removeClass, isHostMethod, isSiblingChecked;
+        setup, validation, validity, checkField, bypassChecks, checkValidity, setCustomValidity, support, pattern/*, placeholder*/, range, required, valueMissing, listen, unlisten, preventActions, getTarget, hasClass, addClass, removeClass, isHostMethod, isSiblingChecked;
     
     setup = function(form, settings) {
         
         var opts = {
             validClass : "valid",
             invalidClass : "error",
-            requiredClass : "required",
-            placeholderClass : "placeholder"
+            requiredClass : "required"/*,
+            placeholderClass : "placeholder"*/
         };
 
         if(typeof settings === "object") {
@@ -87,8 +87,8 @@
             missing = valueMissing(elem),
             attrs = {
                 type: elem.getAttribute("type"),
-                pattern: elem.getAttribute("pattern"),
-                placeholder: elem.getAttribute("placeholder")
+                pattern: elem.getAttribute("pattern")/*,
+                placeholder: elem.getAttribute("placeholder")*/
             },
             isType = /^(email|url)$/i,
             evt = /^(input|keyup)$/i,
@@ -112,7 +112,7 @@
             valid: (!missing && !patt && !step && !min && !max && !customError)
         };
         
-        if(attrs.placeholder && !evt.test(curEvt)) { placeholder(elem); }
+/*        if(attrs.placeholder && !evt.test(curEvt)) { placeholder(elem); }*/
     };
     checkField = function(e) {
         var el = getTarget(e) || e, // checkValidity method passes element not event
@@ -128,7 +128,7 @@
                 validity(el);
             }
 
-            if(el.validity.valid && (el.value !== "" || specialTypes.test(el.type)) || (el.value !== el.getAttribute("placeholder") && el.validity.valid)) {
+            if(el.validity.valid && (el.value !== "" || specialTypes.test(el.type)) || /*(el.value !== el.getAttribute("placeholder") &&*/ el.validity.valid/*)*/) {
                 removeClass(el,[args.invalidClass,args.requiredClass]);
                 addClass(el,args.validClass);
             } else if(!events.test(curEvt)) {
@@ -222,20 +222,21 @@
         } else if(!type) {
             return false;
         } else {
-            var placeholder = el.getAttribute("placeholder"),
+            var/* placeholder = el.getAttribute("placeholder"),*/
                 val = el.value;
             
             usrPatt = new RegExp('^(?:' + type + ')$');
-            
+/*			
             if(val === placeholder) {
                 return false;
-            } else if(val === "") {
+            } else */ if(val === "") {
                 return false;
             } else {
                 return !usrPatt.test(el.value);
             }
         }
     };
+/*
     placeholder = function(el) {
         var attrs = { placeholder: el.getAttribute("placeholder") },
             focus = /^(focus|focusin|submit)$/i,
@@ -257,6 +258,7 @@
             }
         }
     };
+*/
     range = function(el, type) {
         // Emulate min, max and step
         var min = parseInt(el.getAttribute("min"),10) || 0,
@@ -285,10 +287,10 @@
         return (required) ? valueMissing(el) : false;
     };
     valueMissing = function(el) {
-        var placeholder = el.getAttribute("placeholder"),
+        var /*placeholder = el.getAttribute("placeholder"),*/
             specialTypes = /^(checkbox|radio)$/i,
             isRequired = !!(el.attributes["required"]);
-        return !!(isRequired && (el.value === "" || el.value === placeholder || (specialTypes.test(el.type) && !isSiblingChecked(el))));
+        return !!(isRequired && (el.value === "" /*|| el.value === placeholder*/ || (specialTypes.test(el.type) && !isSiblingChecked(el))));
     };
     
     /* Util methods */
