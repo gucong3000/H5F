@@ -124,4 +124,56 @@
 		});
 	};
 
+	/*
+	 * jQuery input event
+	 * Author: qil
+	 * 让IE等低端浏览器支持input事件
+	 */
+	(function() {
+	
+		// 声明快捷方式：$(elem).input(function () {});
+		$.fn.input = function (callback) {
+			return this.bind('input', callback);
+		};
+
+		if ('oninput' in input) {
+			return;
+		}
+
+		$(doc).bind("focusin.input", function(e){
+			bindInputFn(e.target);
+		});
+	
+		// IE6\7\8不支持input事件，但支持propertychange事件
+		var	events = "propertychange.input change.input keypress.input",
+			strInputEventOldValue = "@inputEventOldValue";
+			strInputEventFixed = "@inputEventFixed";
+	
+		function inputFn(e){
+			setTimeout(function(){
+				var	target = e.target,
+					newVal = target.value || target.innerHTML;
+					
+				target = $(target);
+			
+				if(target.data(strInputEventOldValue) !== newVal){
+					target.data(strInputEventOldValue, newVal);
+					target.trigger('input');
+				}
+			}, 0);
+		}
+
+		function bindInputFn(elem){
+			var $elem = $(elem);
+			if(!$elem.data(strInputEventFixed)){
+				if(/^text(area)?$/i.test(elem.type) || elem.contentEditable === "true"){
+					$elem.bind(events, inputFn);
+				}
+				$elem.data(strInputEventFixed, 1);
+			}
+		}
+	
+	
+	})();
 })(jQuery);
+
